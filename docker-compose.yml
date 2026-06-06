@@ -1,0 +1,33 @@
+services:
+  transmitter:
+    build: .
+    image: wakemypc-transmitter:latest
+    container_name: wakemypc-transmitter
+    restart: unless-stopped
+
+    # === HOST NETWORKING IS REQUIRED ===
+    # Wake-on-LAN sends a UDP *broadcast* on the LAN, and the SSH/TCP relay and
+    # status probes connect to other machines on the LAN by IP. A bridged
+    # container network can't do either, so the transmitter must share the
+    # host's network stack. (Linux only -- host mode is not supported on Docker
+    # Desktop for macOS/Windows.)
+    network_mode: host
+
+    environment:
+      # Base server URL. Production: wss://wakemypc.com
+      # Local dev against your own backend: ws://192.168.x.x:8000
+      SERVER_URL: ${SERVER_URL:?set SERVER_URL in .env}
+      # The transmitter's unique_id, as registered on the dashboard
+      # (Transmitters -> Add). Goes in the WebSocket path.
+      UNIQUE_ID: ${UNIQUE_ID:?set UNIQUE_ID in .env}
+      # The transmitter's device token (dashboard -> the transmitter -> Rotate
+      # token reveals it). This is the secret that authenticates the connection.
+      TOKEN: ${TOKEN:?set TOKEN in .env}
+
+      # Optional tuning:
+      FIRMWARE_VERSION: ${FIRMWARE_VERSION:-docker-1.0.0}
+      HEARTBEAT_INTERVAL: ${HEARTBEAT_INTERVAL:-30}
+      DEVICE_SCAN_INTERVAL: ${DEVICE_SCAN_INTERVAL:-60}
+      # Set to 1 ONLY for local dev with a self-signed cert.
+      INSECURE_SKIP_TLS_VERIFY: ${INSECURE_SKIP_TLS_VERIFY:-0}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}

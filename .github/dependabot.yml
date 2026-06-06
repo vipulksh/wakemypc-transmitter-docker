@@ -1,0 +1,36 @@
+# Dependabot for the WakeMyPC software (Docker) transmitter.
+# See https://docs.github.com/code-security/dependabot
+version: 2
+updates:
+  # Python deps (requirements.txt)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      python:
+        patterns:
+          - "*"
+
+  # The transmitter's Docker base image (Dockerfile)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  # docker-compose.yml image references
+  - package-ecosystem: "docker-compose"
+    directories:
+      - "/"
+    schedule:
+      interval: "daily"
+
+  # GitHub Actions workflows (if/when added)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
