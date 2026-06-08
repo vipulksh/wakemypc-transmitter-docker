@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 # No build deps needed -- websockets is pure-Python.
 WORKDIR /app
